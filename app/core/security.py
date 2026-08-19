@@ -1,17 +1,26 @@
 from datetime import timedelta, timezone, datetime
-from jose import jwt, JWTError
-from passlib.context import CryptContext
+from typing import Any
+from jose import jwt
 from app.core.config import settings
+import bcrypt
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def hash_password(password:str) -> str:
-    return pwd_context.hash(password)
+    # 1. Переводим строку пароля в байты
+    password_bytes = password.encode('utf-8')
+
+    # 2. Генерируем соль
+    salt = bcrypt.gensalt()
+
+    # 3. Хэшируем и декодируем обратно в строку для БД
+    hashed_bytes = bcrypt.hashpw(password_bytes, salt)
+    return hashed_bytes.decode('utf-8')
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    # Переводим обе строки в байты и сравниваем их через специальный метод
+    return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
 
-def create_access_token(data:dict, expires_delta: timedelta | None = None) -> str:
+def create_access_token(data: dict[str, Any], expires_delta: timedelta | None = None) -> str:
     to_encode = data.copy()
     expire = datetime.now(timezone.utc) + (expires_delta or timedelta(minutes=settings.access_token_expire_minutes))
 

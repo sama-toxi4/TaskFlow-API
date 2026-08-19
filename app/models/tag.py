@@ -10,6 +10,4 @@ class Tag(Base):
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     name: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
 
-    task: Mapped["Task"] = relationship(back_populates="tag")
-
     tasks: Mapped[List["Task"]] = relationship(secondary="task_tags", back_populates="tags")

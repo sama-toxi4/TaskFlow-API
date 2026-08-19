@@ -21,7 +21,6 @@ class Task(Base):
 
     assignee: Mapped["User"] = relationship(back_populates="assigned_tasks")
     project: Mapped["Project"] = relationship(back_populates="task")
-    tag: Mapped[List["Tag"]] = relationship(back_populates="task")
 
     tags: Mapped[List["Tag"]] = relationship(secondary="task_tags", back_populates="tasks")
 
