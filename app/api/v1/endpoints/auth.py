@@ -11,7 +11,7 @@ from app.schemas.user import UserResponse, UserCreate
 router = APIRouter()
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-async def register(user_data: UserCreate, db: AsyncSession = Depends(get_session)) -> UserResponse:
+async def register(user_data: UserCreate, db: AsyncSession = Depends(get_session)):
 
     # Проверка на уникальность email
     result = await db.execute(select(User).where(User.email == user_data.email))

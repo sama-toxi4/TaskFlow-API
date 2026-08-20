@@ -26,4 +26,14 @@ Alembic для миграций БД
 
 python -m venv venv  
 source venv/bin/activate  # для Windows: venv\Scripts\activate  
-pip install requirements.txt
+pip install -r requirements.txt
+
+В случае работы с локальной БД:  
+Создайте БД taskflow
+
+Инициируем alembic:  
+alembic revision --autogenerate -m "init"  
+alembic upgrade head
+
+Запускаем приложение:  
+uvicorn app.main:app --reload
