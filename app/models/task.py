@@ -13,7 +13,7 @@ class Task(Base):
     description: Mapped[str] = mapped_column(String(100), nullable=False)
     status: Mapped[str] = mapped_column(Enum("todo", "in_progress", "done", native_enum=False), default="todo", nullable=False)
     priority: Mapped[str] = mapped_column(Enum("low", "medium", "high", native_enum=False), default="low", nullable=False)
-    due_date: Mapped[datetime] = mapped_column(nullable=False)
+    due_date: Mapped[datetime] = mapped_column(nullable=False, server_default=func.now())
     project_id: Mapped[int] = mapped_column(ForeignKey("project.id"), nullable=False)
     assignee_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     created_at: Mapped[datetime] = mapped_column(nullable=False, server_default=func.now())

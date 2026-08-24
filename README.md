@@ -29,10 +29,14 @@ source venv/bin/activate  # для Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
 В случае работы с локальной БД:  
-Создайте БД taskflow
+Создайте БД taskflow  
+Создайте в корневой папке проекта файл .env  
 
-Инициируем alembic:  
-alembic revision --autogenerate -m "init"  
+Напишите туда:  
+DATABASE_URL = *ссылка на бд*
+SECRET_KEY = *произвольные символы*
+
+Загружаем актуальные данные в БД через alembic:
 alembic upgrade head
 
 Запускаем приложение:  

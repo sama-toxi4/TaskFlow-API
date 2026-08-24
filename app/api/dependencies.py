@@ -5,7 +5,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.core.config import settings
 from app.db.session import get_session
-from app.models.user import User
+from app.models.project import Project
+from app.models.user import User, ProjectUsers
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
@@ -40,3 +41,34 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession
         raise credentials_exception
 
     return user
+
+async def get_project_or_404(project_id: int, db:AsyncSession = Depends(get_session)) -> Project:
+    project = await db.get(Project, project_id)
+
+    if not project:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = "Project not found")
+
+    return project
+
+async def check_project_access(project: Project = Depends(get_project_or_404),
+                               current_user: User = Depends(get_current_user),
+                               db: AsyncSession = Depends(get_session)) -> Project:
+
+    # Проверяем, является ли пользователь владельцем или участником
+    if project.owner_id == current_user.id or current_user.role == "admin":
+        return project
+
+    result = await db.execute(select(ProjectUsers).where(ProjectUsers.project_id == project.id, ProjectUsers.user_id == current_user.id))
+
+    if not result.scalar_one_or_none():
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+
+    return project
+
+async def check_project_owner(project: Project = Depends(get_project_or_404),
+                              current_user: User = Depends(get_current_user)) -> Project:
+
+    if project.owner_id != current_user.id and current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+
+    return project

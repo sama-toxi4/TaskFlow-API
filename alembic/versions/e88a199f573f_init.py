@@ -1,8 +1,8 @@
 """init
 
-Revision ID: 954828c310d6
+Revision ID: e88a199f573f
 Revises: 
-Create Date: 2026-08-20 22:57:18.006290
+Create Date: 2026-08-24 16:43:13.622738
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '954828c310d6'
+revision: str = 'e88a199f573f'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -44,8 +44,8 @@ def upgrade() -> None:
     sa.Column('name', sa.String(length=50), nullable=False),
     sa.Column('description', sa.String(length=100), nullable=False),
     sa.Column('owner_id', sa.Integer(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=False),
-    sa.Column('updated_at', sa.DateTime(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.ForeignKeyConstraint(['owner_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('name')
@@ -64,7 +64,7 @@ def upgrade() -> None:
     sa.Column('description', sa.String(length=100), nullable=False),
     sa.Column('status', sa.Enum('todo', 'in_progress', 'done', native_enum=False), nullable=False),
     sa.Column('priority', sa.Enum('low', 'medium', 'high', native_enum=False), nullable=False),
-    sa.Column('due_date', sa.DateTime(), nullable=False),
+    sa.Column('due_date', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.Column('project_id', sa.Integer(), nullable=False),
     sa.Column('assignee_id', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
