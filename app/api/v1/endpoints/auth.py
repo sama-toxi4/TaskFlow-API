@@ -17,7 +17,7 @@ async def register(user_data: UserCreate, db: AsyncSession = Depends(get_session
     result = await db.execute(select(User).where(User.email == user_data.email))
 
     if result.scalar_one_or_none():
-        raise HTTPException(status_code=400, detail="Email already registered")
+        raise HTTPException(400, "Email already registered")
 
     # Создание пользователя
     new_user = User(
@@ -43,7 +43,7 @@ async def login(
     user = result.scalar_one_or_none()
 
     if not user or not verify_password(form_data.password, user.hashed_password):
-        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password")
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Incorrect email or password")
 
     # Создаём токен
     access_token = create_access_token(data = {"sub": str(user.id), "role": user.role})

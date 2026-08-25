@@ -19,7 +19,7 @@ async def create_project(project_data: ProjectCreate,
     result = await db.execute(select(Project).where(Project.name == project_data.name))
 
     if result.scalar_one_or_none():
-        raise HTTPException(status_code=400, detail="Project with this name already exists")
+        raise HTTPException(400, "Project with this name already exists")
 
     new_project = Project(
         name = project_data.name,
@@ -47,7 +47,7 @@ async def list_projects(
     per_page: int = Query(1, ge=1, le=100),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_session)
-                        ) -> PageResponse[ProjectResponse]:
+                        ):
 
     if current_user.role == "admin":
         base_query = select(Project)
@@ -95,3 +95,5 @@ async def delete_project(project: Project = Depends(check_project_owner),
     await db.delete(project)
     await db.commit()
     return None
+
+

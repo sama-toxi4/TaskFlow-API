@@ -9,3 +9,7 @@ pydantic
 email-validator
 python-multipart
 bcrypt
+pytest
+pytest-asyncio
+httpx
+pre-commit
