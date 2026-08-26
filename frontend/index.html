@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div id="app">
+    <!-- Экран авторизации -->
+    <div id="auth-screen" class="screen active">
+        <div class="auth-container">
+            <div class="logo">📋 TaskFlow</div>
+            <div class="tabs">
+                <button id="login-tab" class="tab active">Вход</button>
+                <button id="register-tab" class="tab">Регистрация</button>
+            </div>
+            <form id="auth-form">
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="text" id="full_name" placeholder="Имя (только для регистрации)" style="display:none;">
+                <input type="password" id="password" placeholder="Пароль" required>
+                <button type="submit" id="auth-btn" class="btn primary">Войти</button>
+            </form>
+            <p id="auth-error" class="error"></p>
+        </div>
+    </div>
+
+    <!-- Основной экран -->
+    <div id="main-screen" class="screen">
+        <header>
+            <div class="header-left">
+                <span class="logo">📋 TaskFlow</span>
+            </div>
+            <div class="header-right">
+                <span id="user-email"></span>
+                <button id="logout-btn" class="btn secondary">Выйти</button>
+            </div>
+        </header>
+
+        <nav>
+            <button id="projects-nav" class="nav-btn active">Проекты</button>
+            <button id="tags-nav" class="nav-btn">Теги</button>
+        </nav>
+
+        <main>
+            <!-- Секция проектов -->
+            <section id="projects-section">
+                <div class="section-header">
+                    <h2>Проекты</h2>
+                    <button id="create-project-btn" class="btn primary">+ Новый проект</button>
+                </div>
+                <div id="projects-list" class="cards-list"></div>
+                <div id="projects-pagination" class="pagination"></div>
+            </section>
+
+            <!-- Секция тегов -->
+            <section id="tags-section" style="display:none;">
+                <div class="section-header">
+                    <h2>Теги</h2>
+                    <button id="create-tag-btn" class="btn primary">+ Новый тег</button>
+                </div>
+                <div id="tags-list" class="cards-list"></div>
+            </section>
+
+            <!-- Секция задач (Kanban) -->
+            <section id="tasks-section" style="display:none;">
+                <div class="section-header">
+                    <h2>Задачи: <span id="current-project-name"></span></h2>
+                    <button id="back-to-projects" class="btn secondary">← Назад</button>
+                </div>
+                <div class="filters">
+                    <select id="filter-status">
+                        <option value="">Все статусы</option>
+                        <option value="todo">Ожидает</option>
+                        <option value="in_progress">В работе</option>
+                        <option value="done">Готово</option>
+                    </select>
+                    <select id="filter-priority">
+                        <option value="">Все приоритеты</option>
+                        <option value="low">Низкий</option>
+                        <option value="medium">Средний</option>
+                        <option value="high">Высокий</option>
+                    </select>
+                    <button id="create-task-btn" class="btn primary">+ Новая задача</button>
+                </div>
+                <div id="kanban-board" class="kanban-board">
+                    <div class="kanban-column" data-status="todo">
+                        <h3>Ожидает</h3>
+                        <div class="kanban-tasks" id="tasks-todo"></div>
+                    </div>
+                    <div class="kanban-column" data-status="in_progress">
+                        <h3>В работе</h3>
+                        <div class="kanban-tasks" id="tasks-in_progress"></div>
+                    </div>
+                    <div class="kanban-column" data-status="done">
+                        <h3>Готово</h3>
+                        <div class="kanban-tasks" id="tasks-done"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+
+<!-- Модальное окно -->
+<div id="modal" class="modal-overlay" style="display:none;">
+    <div class="modal">
+        <h3 id="modal-title"></h3>
+        <form id="modal-form"></form>
+        <div class="modal-actions">
+            <button id="modal-close" class="btn secondary">Отмена</button>
+        </div>
+    </div>
+</div>
+
+<!-- Уведомления -->
+<div id="toast" class="toast"></div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

@@ -22,7 +22,8 @@ async def db_session() -> AsyncGenerator[AsyncSession, None]:
 @pytest.fixture(scope="session")
 async def prepare_database():
     async with test_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+        await conn.run_sync(Base.metadata.drop_all)   # удаляем все таблицы
+        await conn.run_sync(Base.metadata.create_all) # создаём заново
     yield
     async with test_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)

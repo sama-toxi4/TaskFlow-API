@@ -6,6 +6,7 @@ from app.db.session import get_session
 from app.models.project import Project
 from app.models.user import User, ProjectUsers
 from app.schemas.project import ProjectResponse, PageResponse, ProjectCreate, ProjectUpdate
+from app.schemas.user import UserResponse
 
 router = APIRouter()
 
@@ -96,4 +97,37 @@ async def delete_project(project: Project = Depends(check_project_owner),
     await db.commit()
     return None
 
+# Эндпоинт получения участников проекта
+@router.get("/{project_id}/members", response_model=list[UserResponse])
+async def list_project_members(
+        project_id: int,
+        db: AsyncSession = Depends(get_session),
+        current_user: User = Depends(get_current_user),
+):
+    # Проверяем, что пользователь имеет доступ к проекту
+    project = await db.get(Project, project_id)
+    if not project:
+        raise HTTPException(404, "Project not found")
+    if project.owner_id != current_user.id and current_user.role != "admin":
+        member = await db.execute(
+            select(ProjectUsers).where(
+                ProjectUsers.project_id == project_id,
+                ProjectUsers.user_id == current_user.id,
+                )
+        )
+        if not member.scalar_one_or_none():
+            raise HTTPException(403, "Not enough permissions")
 
+    # Получаем всех участников (владелец + участники)
+    result = await db.execute(
+        select(User).where(
+            or_(
+                User.id == project.owner_id,
+                User.id.in_(
+                    select(ProjectUsers.user_id).where(ProjectUsers.project_id == project_id)
+                )
+            )
+        )
+    )
+    members = result.scalars().all()
+    return members

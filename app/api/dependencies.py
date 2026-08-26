@@ -6,6 +6,7 @@ from sqlalchemy import select
 from app.core.config import settings
 from app.db.session import get_session
 from app.models.project import Project
+from app.models.task import Task
 from app.models.user import User, ProjectUsers
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
@@ -54,7 +55,7 @@ async def check_project_access(project: Project = Depends(get_project_or_404),
                                current_user: User = Depends(get_current_user),
                                db: AsyncSession = Depends(get_session)) -> Project:
 
-    # Проверяем, является ли пользователь владельцем или участником
+    # Проверяем, является ли пользователь владельцем, участником или админом
     if project.owner_id == current_user.id or current_user.role == "admin":
         return project
 
@@ -72,3 +73,20 @@ async def check_project_owner(project: Project = Depends(get_project_or_404),
         raise HTTPException(status_code=403, detail="Not enough permissions")
 
     return project
+
+async def get_task_or_404(task_id: int,
+                          db:AsyncSession = Depends(get_session)) -> Task:
+    task = await db.get(Task, task_id)
+
+    if not task:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = "Task not found")
+
+    return task
+
+async def check_task_assigned(task: Task = Depends(get_task_or_404),
+                              current_user: User = Depends(get_current_user)) -> Task:
+
+    if task.assignee_id != current_user.id and current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+
+    return task
