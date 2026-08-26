@@ -10,12 +10,23 @@ from app.models.project import Project
 from app.models.task import Task, TaskTags
 from app.models.tag import Tag
 from app.core.redis import redis_client, delete_cache
+from app.tasks import start_celery_worker, start_celery_beat, stop_process
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await delete_cache("tags:all")  # очищаем при старте
+    # Очищаем кеш
+    await delete_cache("tags:all")
+
+    # Запускаем селери
+    worker_process = start_celery_worker()
+    beat_process = start_celery_beat()
+
     yield
+
+    stop_process(worker_process)
+    stop_process(beat_process)
+
     await redis_client.close()
 
 app = FastAPI(title="TaskFlow API", version="0.1.0", lifespan=lifespan)
