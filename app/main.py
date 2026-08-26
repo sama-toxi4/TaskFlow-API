@@ -2,13 +2,23 @@ from fastapi import FastAPI
 from app.api.v1.router import api_router
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+from contextlib import asynccontextmanager
+
 from app.db.base import Base
 from app.models.user import User, ProjectUsers
 from app.models.project import Project
 from app.models.task import Task, TaskTags
 from app.models.tag import Tag
+from app.core.redis import redis_client, delete_cache
 
-app = FastAPI(title="TaskFlow API", version="0.1.0")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await delete_cache("tags:all")  # очищаем при старте
+    yield
+    await redis_client.close()
+
+app = FastAPI(title="TaskFlow API", version="0.1.0", lifespan=lifespan)
 
 app.include_router(api_router, prefix="/api/v1")
 

@@ -265,9 +265,6 @@ async function loadTasks() {
         const column = kanbanColumns[task.status] || kanbanColumns.todo;
         column.appendChild(createTaskCard(task));
     });
-
-    // Добавляем обработчики drag and drop
-    setupDragAndDrop();
 }
 
 function createTaskCard(task) {
@@ -314,6 +311,12 @@ function createTaskCard(task) {
             showToast('Задача удалена');
         }
     });
+
+    card.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text/plain', card.dataset.taskId);
+        card.classList.add('dragging');
+    });
+    card.addEventListener('dragend', () => card.classList.remove('dragging'));
 
     return card;
 }
@@ -380,15 +383,6 @@ async function editTask(taskId) {
 
 // Drag and Drop
 function setupDragAndDrop() {
-    const cards = document.querySelectorAll('.kanban-tasks .card');
-    cards.forEach(card => {
-        card.addEventListener('dragstart', (e) => {
-            e.dataTransfer.setData('text/plain', card.dataset.taskId);
-            card.classList.add('dragging');
-        });
-        card.addEventListener('dragend', () => card.classList.remove('dragging'));
-    });
-
     document.querySelectorAll('.kanban-column').forEach(column => {
         column.addEventListener('dragover', (e) => {
             e.preventDefault();
@@ -401,9 +395,13 @@ function setupDragAndDrop() {
             const taskId = e.dataTransfer.getData('text/plain');
             const newStatus = column.dataset.status;
             if (taskId) {
-                await apiRequest(`/tasks/${taskId}`, 'PATCH', { status: newStatus });
-                loadTasks();
-                showToast('Статус обновлён');
+                try {
+                    await apiRequest(`/tasks/${taskId}`, 'PATCH', { status: newStatus });
+                    loadTasks();
+                    showToast('Статус обновлён');
+                } catch (error) {
+                    showToast(error.message, 'error');
+                }
             }
         });
     });
@@ -528,3 +526,5 @@ if (token) {
     showScreen('auth-screen');
     setAuthMode('login');
 }
+
+setupDragAndDrop();
