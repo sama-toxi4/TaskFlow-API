@@ -6,7 +6,7 @@ class Settings(BaseSettings):
     secret_key: str = "ctrhtnysqrk.x"
     algorithm: str = "HS256"
     redis_url: str = "redis://localhost:6379"
-    access_token_expire_minutes: int = 30
+    ttl_token: int = 30
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
