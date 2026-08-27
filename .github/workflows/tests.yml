@@ -50,12 +50,12 @@ jobs:
 
       - name: Run migrations
         env:
-          DATABASE_URL: postgresql+asyncpg://user:password@localhost:5432/taskflow_test
+          DATABASE_URL: postgresql+asyncpg://postgres:ujifrhen7425@localhost:5432/taskflow_test
         run: alembic upgrade head
 
       - name: Run tests
         env:
-          DATABASE_URL: postgresql+asyncpg://user:password@localhost:5432/taskflow_test
+          DATABASE_URL: postgresql+asyncpg://postgres:ujifrhen7425@localhost:5432/taskflow_test
           REDIS_URL: redis://localhost:6379/0
           SECRET_KEY: test-secret-key
         run: python -m pytest
