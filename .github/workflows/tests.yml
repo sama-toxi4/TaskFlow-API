@@ -58,4 +58,4 @@ jobs:
           DATABASE_URL: postgresql+asyncpg://user:password@localhost:5432/taskflow_test
           REDIS_URL: redis://localhost:6379/0
           SECRET_KEY: test-secret-key
-        run: pytest
+        run: python -m pytest
