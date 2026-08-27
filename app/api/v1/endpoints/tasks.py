@@ -1,6 +1,9 @@
 from datetime import datetime
+
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import select, or_, func, delete
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.api.dependencies import get_current_user, get_task_or_404
 from app.db.session import get_session
 from app.models.project import Project
@@ -9,7 +12,6 @@ from app.models.task import Task, TaskTags
 from app.models.user import User, ProjectUsers
 from app.schemas.project import PageResponse
 from app.schemas.task import TaskResponse, TaskCreate, TaskUpdate
-from sqlalchemy import select, or_, func, delete
 
 router = APIRouter()
 

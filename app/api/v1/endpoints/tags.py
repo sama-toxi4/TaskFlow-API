@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends, status, HTTPException
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.api.dependencies import get_current_user
 from app.core.redis import get_cache, set_cache, delete_cache
 from app.db.session import get_session
-from app.models.user import User
 from app.models.tag import Tag
-from sqlalchemy import select
+from app.models.user import User
 from app.schemas.tag import TagResponse, TagCreate
 
 router = APIRouter()

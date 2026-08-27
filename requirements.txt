@@ -13,6 +13,7 @@ pytest
 pytest-asyncio
 httpx
 pre-commit
+redis
 asyncio
 redis
 celery[redis]

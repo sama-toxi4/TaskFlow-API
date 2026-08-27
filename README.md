@@ -21,23 +21,28 @@ Alembic для миграций БД
 Технологии: Python 3.11+, FastAPI, SQLAlchemy 2.0 (async), PostgreSQL, Redis, Celery, Pydantic v2, Alembic, Docker, pytest, GitHub Actions (CI).  
 
 # Инструкция по запуску
-Для создания виртаульного окружения и установки зависимостей  
+Для создания виртуального окружения и установки зависимостей  
 Пишем в консоль данные команды в консоль:  
 
 python -m venv venv  
-source venv/bin/activate  # для Windows: venv\Scripts\activate  
-pip install -r requirements.txt
+venv\Scripts\activate  
+pip install -r requirements.txt  
 
 В случае работы с локальной БД:  
 Создайте БД taskflow  
 Создайте в корневой папке проекта файл .env  
 
 Напишите туда:  
-DATABASE_URL = *ссылка на бд*
-SECRET_KEY = *произвольные символы*
+DATABASE_URL = *ссылка на бд*  
+SECRET_KEY = *произвольные символы*  
 
-Загружаем актуальные данные в БД через alembic:
-alembic upgrade head
+Загружаем актуальные данные в БД через alembic:  
+alembic upgrade head  
 
 Запускаем приложение:  
-uvicorn app.main:app --reload
+uvicorn app.main:app --reload  
+
+В случае работы с Docker-compose:  
+docker compose up --build -d  
+docker compose exec app alembic revision --autogenerate -m "init"  
+docker compose exec app alembic upgrade head  

@@ -1,7 +1,10 @@
 from typing import List
-from sqlalchemy import String, ForeignKey, Boolean, Enum
+
+from sqlalchemy import String, ForeignKey, Enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.db.base import Base
+
 
 class User(Base):
     __tablename__ = "user"

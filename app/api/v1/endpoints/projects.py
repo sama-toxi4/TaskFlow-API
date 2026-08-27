@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Query, Depends, status, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, or_
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.api.dependencies import get_current_user, check_project_access, check_project_owner
 from app.db.session import get_session
 from app.models.project import Project

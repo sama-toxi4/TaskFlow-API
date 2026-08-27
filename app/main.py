@@ -1,14 +1,10 @@
 from fastapi import FastAPI
-from app.api.v1.router import api_router
-from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from contextlib import asynccontextmanager
 
-from app.db.base import Base
-from app.models.user import User, ProjectUsers
-from app.models.project import Project
-from app.models.task import Task, TaskTags
-from app.models.tag import Tag
+from fastapi.staticfiles import StaticFiles
+
+from app.api.v1.router import api_router
 from app.core.redis import redis_client, delete_cache
 from app.tasks import start_celery_worker, start_celery_beat, stop_process
 

@@ -1,12 +1,9 @@
 import pytest
 from httpx import AsyncClient
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.user import User, ProjectUsers
-from app.models.project import Project
-from app.models.task import Task, TaskTags
-from app.models.tag import Tag
+from app.models.user import ProjectUsers
+
 
 # Вспомогательная функция регистрации и входа
 async def register_and_login(client: AsyncClient, email: str = "user@example.com", password: str = "password123") -> str:
@@ -141,7 +138,7 @@ async def test_list_tasks_with_filters(client: AsyncClient, db_session):
         "title": "Task 3", "description": "Desc", "status": "todo", "priority": "medium"
     }, headers={"Authorization": f"Bearer {token}"})
 
-    # Фильтр по статусу todo
+    # Фильтр по статусу to do
     resp = await client.get("/api/v1/tasks?status=todo", headers={"Authorization": f"Bearer {token}"})
     assert resp.status_code == 200
     data = resp.json()

@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+
 from app.api.v1.endpoints import db_check, users, auth, projects, tags, tasks
 
 api_router = APIRouter()
