@@ -5,11 +5,12 @@ from httpx import AsyncClient, ASGITransport
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 
+from app.core.config import settings
 from app.db.base import Base
 from app.db.session import get_session
 from app.main import app
 
-TEST_DATABASE_URL = "postgresql+asyncpg://postgres:ujifrhen7425@localhost:5432/taskflow_test"
+TEST_DATABASE_URL = settings.test_database_url
 
 # Создаём тестовый движок и фабрику сессий один раз (будет использоваться в одном event loop)
 test_engine = create_async_engine(TEST_DATABASE_URL, echo=False, future=True)
